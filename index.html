@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>XX科技有限公司 - 内推招聘</title>
+  <title>维学新知 - 内推招聘</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -199,6 +199,10 @@
       background: #fff1f2;
       color: #be123c;
     }
+    .job-tag.type-teach {
+      background: #ecfdf5;
+      color: #059669;
+    }
     .job-card .company-intro {
       font-size: 0.88rem;
       color: #64748b;
@@ -251,9 +255,9 @@
 </head>
 <body>
   <div class="banner">
-    <h1>XX科技有限公司</h1>
-    <p class="tagline">用技术创新推动行业发展</p>
-    <p class="desc">我们是一家领先的科技公司，致力于用技术创新推动行业发展。加入我们，与优秀的团队一起创造未来！</p>
+    <h1>维学新知</h1>
+    <p class="tagline">圆桌星球 - 少儿思辨教育</p>
+    <p class="desc">维学新知成立于2018年，是新型线上素质教育公司，主营产品为圆桌星球，以人文思辨课、硅谷数理课等系列课程作为主要业务线，面向1-7年级学生开展线上圆桌会形式的少儿思辨课程。</p>
   </div>
 
   <div class="container">
@@ -267,6 +271,10 @@
           <span class="filter-chip" data-value="深圳">深圳</span>
           <span class="filter-chip" data-value="杭州">杭州</span>
           <span class="filter-chip" data-value="广州">广州</span>
+          <span class="filter-chip" data-value="武汉">武汉</span>
+          <span class="filter-chip" data-value="重庆">重庆</span>
+          <span class="filter-chip" data-value="大连">大连</span>
+          <span class="filter-chip" data-value="远程">远程</span>
         </div>
       </div>
       <div class="filter-group">
@@ -287,6 +295,7 @@
           <span class="filter-chip" data-value="设计">设计</span>
           <span class="filter-chip" data-value="运营">运营</span>
           <span class="filter-chip" data-value="市场">市场</span>
+          <span class="filter-chip" data-value="教学">教学</span>
           <span class="filter-chip" data-value="职能">职能</span>
         </div>
       </div>
@@ -309,7 +318,7 @@
       const filters = { city: '', recruitType: '', jobType: '' };
 
       function getJobTypeClass(type) {
-        const map = { '技术': 'type-tech', '产品': 'type-product', '设计': 'type-design', '运营': 'type-ops', '市场': 'type-ops', '职能': 'type-ops' };
+        const map = { '技术': 'type-tech', '产品': 'type-product', '设计': 'type-design', '运营': 'type-ops', '市场': 'type-ops', '教学': 'type-teach', '职能': 'type-ops' };
         return map[type] || 'type-tech';
       }
 

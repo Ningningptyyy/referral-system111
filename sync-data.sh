@@ -11,19 +11,20 @@ TABLE_ID="tblL8ayvBlr0WlHi"
 echo "正在从 Lark Base 同步岗位数据..."
 
 # 获取所有记录（只获取已勾选"是否展示"的岗位）
+# 字段顺序: 0=岗位名称, 1=岗位介绍, 2=期望城市, 3=是否展示, 4=招聘类型, 5=公司简介, 6=岗位类型
 lark-cli base +record-list \
   --base-token "$BASE_TOKEN" \
   --table-id "$TABLE_ID" \
   --as user \
   --format json 2>/dev/null | \
-  jq '[.data[] | select(.["是否展示"] == true) | {
-    id: ._record_id,
-    name: .["岗位名称"],
-    city: (.["期望城市"] | if type == "array" then .[0] else . end),
-    recruitType: (.["招聘类型"] | if type == "array" then .[0] else . end),
-    jobType: (.["岗位类型"] | if type == "array" then .[0] else . end),
-    description: .["岗位介绍"],
-    companyIntro: .["公司简介"]
+  jq '[.data as $d | $d.data | to_entries[] | select(.value[3] == true) | {
+    id: $d.record_id_list[.key],
+    name: .value[0],
+    description: .value[1],
+    city: (.value[2] | if type == "array" then .[0] else . end),
+    recruitType: (.value[4] | if type == "array" then .[0] else . end),
+    companyIntro: .value[5],
+    jobType: (.value[6] | if type == "array" then .[0] else . end)
   }]' > /workspace/referral-site/jobs.json
 
 if [ $? -eq 0 ]; then
