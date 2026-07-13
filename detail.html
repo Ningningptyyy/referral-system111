@@ -262,57 +262,11 @@
 
     /* Share Card inside modal */
     .share-card {
-      background: linear-gradient(135deg, #f8fafc 0%, #fff 100%);
-      border: 1px solid #e2e8f0;
+      background: #fff;
       border-radius: 12px;
-      padding: 24px;
-      margin-bottom: 20px;
+      padding: 4px;
+      margin-bottom: 12px;
       text-align: center;
-    }
-    .share-card .share-company {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #2563eb;
-      margin-bottom: 4px;
-    }
-    .share-card .share-tagline {
-      font-size: 0.82rem;
-      color: #94a3b8;
-      margin-bottom: 16px;
-    }
-    .share-card .share-job-name {
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: 10px;
-    }
-    .share-card .share-job-tags {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-    .share-card .share-job-tags span {
-      font-size: 0.8rem;
-      padding: 3px 12px;
-      border-radius: 6px;
-      background: #f1f5f9;
-      color: #475569;
-    }
-    .share-card .qr-wrapper {
-      display: flex;
-      justify-content: center;
-      margin: 8px 0;
-    }
-    .share-card .qr-wrapper canvas,
-    .share-card .qr-wrapper img {
-      border-radius: 8px;
-    }
-    .share-card .qr-hint {
-      font-size: 0.78rem;
-      color: #94a3b8;
-      margin-top: 8px;
     }
 
     .btn-download {
@@ -381,12 +335,8 @@
       <button class="modal-close" id="modalCloseBtn">&times;</button>
       <div class="modal-title">职位分享卡片</div>
       <div class="share-card" id="shareCard">
-        <div class="share-company">维学新知</div>
-        <div class="share-tagline">用技术创新推动行业发展</div>
-        <div class="share-job-name" id="shareJobName"></div>
-        <div class="share-job-tags" id="shareJobTags"></div>
-        <div class="qr-wrapper" id="qrCodeContainer"></div>
-        <div class="qr-hint">扫描二维码查看职位详情</div>
+        <img id="shareCardImage" alt="职位分享卡片" style="width:100%;border-radius:8px;display:block" />
+        <p style="font-size:0.78rem;color:#94a3b8;margin-top:8px;text-align:center">长按图片保存到手机</p>
       </div>
       <button class="btn-download" id="downloadBtn">下载卡片</button>
     </div>
@@ -397,7 +347,6 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script>
     (function() {
       function getJobTypeClass(type) {
@@ -475,23 +424,21 @@
       // --- Share Modal ---
       const modal = document.getElementById('shareModal');
       const modalCloseBtn = document.getElementById('modalCloseBtn');
-      let qrInstance = null;
+      const shareImage = document.getElementById('shareCardImage');
 
-      function openShareModal(job) {
-        document.getElementById('shareJobName').textContent = job.name;
+      function drawShareCard(job, pageUrl) {
+        // Create a hidden div for QR code generation
+        let qrDiv = document.getElementById('_qr_temp');
+        if (!qrDiv) {
+          qrDiv = document.createElement('div');
+          qrDiv.id = '_qr_temp';
+          qrDiv.style.cssText = 'position:absolute;left:-9999px;top:0;width:0;height:0;overflow:hidden';
+          document.body.appendChild(qrDiv);
+        }
+        qrDiv.innerHTML = '';
 
-        const tagsContainer = document.getElementById('shareJobTags');
-        tagsContainer.innerHTML = `
-          <span>📍 ${job.city}</span>
-          <span>${job.recruitType}</span>
-          <span>${job.jobType}</span>
-        `;
-
-        // Generate QR code
-        const qrContainer = document.getElementById('qrCodeContainer');
-        qrContainer.innerHTML = '';
-        const pageUrl = window.location.href;
-        qrInstance = new QRCode(qrContainer, {
+        // Generate QR code on hidden div
+        new QRCode(qrDiv, {
           text: pageUrl,
           width: 140,
           height: 140,
@@ -500,7 +447,104 @@
           correctLevel: QRCode.CorrectLevel.H
         });
 
-        modal.classList.add('open');
+        // Wait for QR code to render
+        setTimeout(function() {
+          const qrCanvas = qrDiv.querySelector('canvas');
+          if (!qrCanvas) return;
+
+          // Main canvas (2x for retina quality)
+          const W = 400, H = 540;
+          const canvas = document.createElement('canvas');
+          canvas.width = W * 2;
+          canvas.height = H * 2;
+          const ctx = canvas.getContext('2d');
+          ctx.scale(2, 2);
+
+          // Background gradient
+          const grad = ctx.createLinearGradient(0, 0, 0, H);
+          grad.addColorStop(0, '#f8fafc');
+          grad.addColorStop(1, '#ffffff');
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, W, H);
+
+          // Border
+          ctx.strokeStyle = '#e2e8f0';
+          ctx.lineWidth = 1;
+          ctx.roundRect(1, 1, W - 2, H - 2, 12);
+          ctx.stroke();
+
+          // Company name
+          ctx.fillStyle = '#2563eb';
+          ctx.font = 'bold 18px system-ui, -apple-system, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('维学新知', W / 2, 44);
+
+          // Tagline
+          ctx.fillStyle = '#94a3b8';
+          ctx.font = '13px system-ui, -apple-system, sans-serif';
+          ctx.fillText('圆桌星球 - 少儿思辨教育', W / 2, 68);
+
+          // Divider line
+          ctx.strokeStyle = '#e2e8f0';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(60, 88);
+          ctx.lineTo(W - 60, 88);
+          ctx.stroke();
+
+          // Job name
+          ctx.fillStyle = '#0f172a';
+          ctx.font = 'bold 22px system-ui, -apple-system, sans-serif';
+          // Truncate job name if too long
+          const jobName = job.name.length > 14 ? job.name.slice(0, 13) + '...' : job.name;
+          ctx.fillText(jobName, W / 2, 120);
+
+          // Tags
+          const tags = [job.city, job.recruitType, job.jobType];
+          const tagColors = [
+            { bg: '#eff6ff', text: '#2563eb' },
+            { bg: '#f0fdf4', text: '#16a34a' },
+            { bg: '#fefce8', text: '#ca8a04' }
+          ];
+          const tagY = 145;
+          let tagX = W / 2 - ((tags.length * 62 + (tags.length - 1) * 8) / 2);
+          tags.forEach(function(tag, i) {
+            const tw = ctx.measureText(tag).width + 20;
+            const tx = W / 2 - ((tags.length * (tw + 8) - 8) / 2) + i * (tw + 8);
+            ctx.fillStyle = tagColors[i].bg;
+            ctx.beginPath();
+            ctx.roundRect(tx, tagY - 9, tw, 26, 6);
+            ctx.fill();
+            ctx.fillStyle = tagColors[i].text;
+            ctx.font = '13px system-ui, -apple-system, sans-serif';
+            ctx.fillText(tag, tx + tw / 2, tagY + 5);
+          });
+
+          // QR Code
+          const qrSize = 130;
+          const qrX = (W - qrSize) / 2;
+          const qrY = 190;
+          ctx.drawImage(qrCanvas, qrX, qrY, qrSize, qrSize);
+
+          // Hint text
+          ctx.fillStyle = '#94a3b8';
+          ctx.font = '12px system-ui, -apple-system, sans-serif';
+          ctx.fillText('扫描二维码查看职位详情', W / 2, qrY + qrSize + 28);
+
+          // Bottom text
+          ctx.fillStyle = '#cbd5e1';
+          ctx.font = '11px system-ui, -apple-system, sans-serif';
+          ctx.fillText('维学新知 · 内推招聘', W / 2, H - 18);
+
+          // Set image
+          shareImage.src = canvas.toDataURL('image/png');
+          modal.classList.add('open');
+        }, 200);
+      }
+
+      function openShareModal(job) {
+        const pageUrl = window.location.href;
+        drawShareCard(job, pageUrl);
       }
 
       function closeShareModal() {
@@ -517,23 +561,16 @@
         if (e.key === 'Escape' && modal.classList.contains('open')) closeShareModal();
       });
 
-      // Download card
+      // Download card (works in desktop browsers)
       document.getElementById('downloadBtn').addEventListener('click', function() {
-        const card = document.getElementById('shareCard');
-        html2canvas(card, {
-          scale: 2,
-          backgroundColor: '#ffffff',
-          useCORS: true,
-          logging: false
-        }).then(canvas => {
-          const link = document.createElement('a');
-          link.download = '职位分享卡片.png';
-          link.href = canvas.toDataURL('image/png');
-          link.click();
-        }).catch(err => {
-          console.error('Download failed:', err);
-          alert('下载失败，请重试');
-        });
+        const src = shareImage.src;
+        if (!src || src === '') return;
+        const link = document.createElement('a');
+        link.download = '职位分享卡片.png';
+        link.href = src;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       });
     })();
   </script>
