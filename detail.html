@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>职位详情 - XX科技有限公司 内推招聘</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    .detail-header {
+      background: #fff;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 16px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #475569;
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    .back-btn:hover {
+      background: #f1f5f9;
+      color: #2563eb;
+    }
+    .back-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Container */
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 32px 20px;
+      flex: 1;
+      width: 100%;
+    }
+
+    /* Loading & Error */
+    .loading-state, .error-state {
+      text-align: center;
+      padding: 80px 20px;
+      color: #94a3b8;
+    }
+    .loading-state .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid #e2e8f0;
+      border-top-color: #2563eb;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .error-state .icon { font-size: 3rem; margin-bottom: 12px; }
+
+    /* Job Detail */
+    .job-detail {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      padding: 36px 32px;
+    }
+    .job-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 16px;
+    }
+    .job-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    .job-tag {
+      display: inline-block;
+      padding: 5px 16px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    .job-tag.city {
+      background: #f0f9ff;
+      color: #0369a1;
+    }
+    .job-tag.recruit {
+      background: #f0fdf4;
+      color: #15803d;
+    }
+    .job-tag.type-tech {
+      background: #eff6ff;
+      color: #2563eb;
+    }
+    .job-tag.type-product {
+      background: #fefce8;
+      color: #a16207;
+    }
+    .job-tag.type-design {
+      background: #faf5ff;
+      color: #9333ea;
+    }
+    .job-tag.type-ops {
+      background: #fff1f2;
+      color: #be123c;
+    }
+
+    /* Section */
+    .detail-section {
+      margin-bottom: 28px;
+    }
+    .detail-section:last-of-type {
+      margin-bottom: 0;
+    }
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #0f172a;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #f1f5f9;
+    }
+    .section-title .icon {
+      margin-right: 6px;
+    }
+    .company-intro-text {
+      font-size: 0.95rem;
+      color: #475569;
+      line-height: 1.8;
+    }
+    .job-desc-text {
+      font-size: 0.95rem;
+      color: #334155;
+      line-height: 1.9;
+      white-space: pre-wrap;
+    }
+    .job-desc-text strong {
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    /* Action Buttons */
+    .action-bar {
+      margin-top: 36px;
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 32px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      text-decoration: none;
+    }
+    .btn-primary {
+      background: #2563eb;
+      color: #fff;
+      flex: 1;
+      min-width: 160px;
+    }
+    .btn-primary:hover {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(37,99,235,0.35);
+    }
+    .btn-secondary {
+      background: #0d9488;
+      color: #fff;
+      flex: 1;
+      min-width: 140px;
+    }
+    .btn-secondary:hover {
+      background: #0f766e;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(13,148,136,0.35);
+    }
+
+    /* Modal Overlay */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,23,42,0.5);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.open {
+      display: flex;
+    }
+    .modal-content {
+      background: #fff;
+      border-radius: 16px;
+      padding: 32px;
+      max-width: 420px;
+      width: 100%;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+      animation: modalIn 0.25s ease;
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.92) translateY(12px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #94a3b8;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    .modal-close:hover {
+      background: #f1f5f9;
+      color: #475569;
+    }
+    .modal-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    /* Share Card inside modal */
+    .share-card {
+      background: linear-gradient(135deg, #f8fafc 0%, #fff 100%);
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .share-card .share-company {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #2563eb;
+      margin-bottom: 4px;
+    }
+    .share-card .share-tagline {
+      font-size: 0.82rem;
+      color: #94a3b8;
+      margin-bottom: 16px;
+    }
+    .share-card .share-job-name {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 10px;
+    }
+    .share-card .share-job-tags {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .share-card .share-job-tags span {
+      font-size: 0.8rem;
+      padding: 3px 12px;
+      border-radius: 6px;
+      background: #f1f5f9;
+      color: #475569;
+    }
+    .share-card .qr-wrapper {
+      display: flex;
+      justify-content: center;
+      margin: 8px 0;
+    }
+    .share-card .qr-wrapper canvas,
+    .share-card .qr-wrapper img {
+      border-radius: 8px;
+    }
+    .share-card .qr-hint {
+      font-size: 0.78rem;
+      color: #94a3b8;
+      margin-top: 8px;
+    }
+
+    .btn-download {
+      width: 100%;
+      padding: 11px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border: 1.5px solid #e2e8f0;
+      background: #fff;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-download:hover {
+      border-color: #2563eb;
+      color: #2563eb;
+      background: #eff6ff;
+    }
+
+    /* Footer */
+    .footer {
+      background: #1e293b;
+      color: #94a3b8;
+      text-align: center;
+      padding: 24px 20px;
+      font-size: 0.85rem;
+      margin-top: auto;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .job-detail { padding: 24px 18px; }
+      .job-title { font-size: 1.4rem; }
+      .action-bar { flex-direction: column; }
+      .btn { width: 100%; }
+      .modal-content { padding: 24px 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="detail-header">
+    <a href="index.html" class="back-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+      返回职位列表
+    </a>
+  </div>
+
+  <div class="container" id="app">
+    <div class="loading-state" id="loadingState">
+      <div class="spinner"></div>
+      <p>正在加载职位信息...</p>
+    </div>
+    <div class="error-state" id="errorState" style="display:none;">
+      <div class="icon">😕</div>
+      <p>职位信息加载失败</p>
+    </div>
+    <div class="job-detail" id="jobDetail" style="display:none;"></div>
+  </div>
+
+  <!-- Share Modal -->
+  <div class="modal-overlay" id="shareModal">
+    <div class="modal-content">
+      <button class="modal-close" id="modalCloseBtn">&times;</button>
+      <div class="modal-title">职位分享卡片</div>
+      <div class="share-card" id="shareCard">
+        <div class="share-company">XX科技有限公司</div>
+        <div class="share-tagline">用技术创新推动行业发展</div>
+        <div class="share-job-name" id="shareJobName"></div>
+        <div class="share-job-tags" id="shareJobTags"></div>
+        <div class="qr-wrapper" id="qrCodeContainer"></div>
+        <div class="qr-hint">扫描二维码查看职位详情</div>
+      </div>
+      <button class="btn-download" id="downloadBtn">下载卡片</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    &copy; 2026 XX科技有限公司 &mdash; 内部推荐招聘平台
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script>
+    (function() {
+      function getJobTypeClass(type) {
+        const map = { '技术': 'type-tech', '产品': 'type-product', '设计': 'type-design', '运营': 'type-ops', '市场': 'type-ops', '职能': 'type-ops' };
+        return map[type] || 'type-tech';
+      }
+
+      function parseBold(text) {
+        return text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+      }
+
+      function getUrlParam(name) {
+        const params = new URLSearchParams(window.location.search);
+        return params.get(name);
+      }
+
+      const jobId = getUrlParam('id');
+      const loadingState = document.getElementById('loadingState');
+      const errorState = document.getElementById('errorState');
+      const jobDetail = document.getElementById('jobDetail');
+
+      if (!jobId) {
+        loadingState.style.display = 'none';
+        errorState.style.display = 'block';
+        errorState.querySelector('p').textContent = '缺少职位 ID 参数';
+        return;
+      }
+
+      fetch('jobs.json')
+        .then(res => {
+          if (!res.ok) throw new Error('Failed to load');
+          return res.json();
+        })
+        .then(jobs => {
+          const job = jobs.find(j => j.id === jobId);
+          if (!job) throw new Error('Job not found');
+
+          loadingState.style.display = 'none';
+          jobDetail.style.display = 'block';
+
+          const descHtml = parseBold(job.description).replace(/\n/g, '<br>');
+
+          jobDetail.innerHTML = `
+            <h1 class="job-title">${job.name}</h1>
+            <div class="job-tags">
+              <span class="job-tag city">📍 ${job.city}</span>
+              <span class="job-tag recruit">${job.recruitType}</span>
+              <span class="job-tag ${getJobTypeClass(job.jobType)}">${job.jobType}</span>
+            </div>
+            <div class="detail-section">
+              <div class="section-title"><span class="icon">🏢</span>公司简介</div>
+              <div class="company-intro-text">${job.companyIntro}</div>
+            </div>
+            <div class="detail-section">
+              <div class="section-title"><span class="icon">📋</span>职位描述</div>
+              <div class="job-desc-text">${descHtml}</div>
+            </div>
+            <div class="action-bar">
+              <a href="https://yuanzhuohui.feishu.cn/share/base/form/shr你的表单ShareToken/KvPcbMUpeawqelswJl7cyUpDnPf" target="_blank" class="btn btn-primary" id="applyBtn">立即投递</a>
+              <button class="btn btn-secondary" id="shareBtn">分享职位</button>
+            </div>
+          `;
+
+          // Share button event
+          document.getElementById('shareBtn').addEventListener('click', function() {
+            openShareModal(job);
+          });
+        })
+        .catch(err => {
+          loadingState.style.display = 'none';
+          errorState.style.display = 'block';
+          console.error(err);
+        });
+
+      // --- Share Modal ---
+      const modal = document.getElementById('shareModal');
+      const modalCloseBtn = document.getElementById('modalCloseBtn');
+      let qrInstance = null;
+
+      function openShareModal(job) {
+        document.getElementById('shareJobName').textContent = job.name;
+
+        const tagsContainer = document.getElementById('shareJobTags');
+        tagsContainer.innerHTML = `
+          <span>📍 ${job.city}</span>
+          <span>${job.recruitType}</span>
+          <span>${job.jobType}</span>
+        `;
+
+        // Generate QR code
+        const qrContainer = document.getElementById('qrCodeContainer');
+        qrContainer.innerHTML = '';
+        const pageUrl = window.location.href;
+        qrInstance = new QRCode(qrContainer, {
+          text: pageUrl,
+          width: 140,
+          height: 140,
+          colorDark: '#1e293b',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.H
+        });
+
+        modal.classList.add('open');
+      }
+
+      function closeShareModal() {
+        modal.classList.remove('open');
+      }
+
+      modalCloseBtn.addEventListener('click', closeShareModal);
+
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) closeShareModal();
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.classList.contains('open')) closeShareModal();
+      });
+
+      // Download card
+      document.getElementById('downloadBtn').addEventListener('click', function() {
+        const card = document.getElementById('shareCard');
+        html2canvas(card, {
+          scale: 2,
+          backgroundColor: '#ffffff',
+          useCORS: true,
+          logging: false
+        }).then(canvas => {
+          const link = document.createElement('a');
+          link.download = '职位分享卡片.png';
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+        }).catch(err => {
+          console.error('Download failed:', err);
+          alert('下载失败，请重试');
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
