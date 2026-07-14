@@ -16,6 +16,26 @@
       flex-direction: column;
     }
 
+    /* Top Header */
+    .top-header {
+      background: #fff;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .top-header .logo {
+      height: 28px;
+      width: auto;
+      display: block;
+    }
+    .top-header .logo-text {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
     /* Banner */
     .banner {
       background: linear-gradient(135deg, #1e40af 0%, #2563eb 40%, #0d9488 100%);
@@ -262,6 +282,10 @@
   </style>
 </head>
 <body>
+  <div class="top-header">
+    <img class="logo" src="logo.png" alt="圆桌星球" />
+    <span class="logo-text">内推</span>
+  </div>
   <div class="banner">
     <h1>维学新知</h1>
     <p class="tagline">圆桌星球 - 少儿思辨教育</p>
