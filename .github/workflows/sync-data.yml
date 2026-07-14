@@ -37,14 +37,14 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{}')
 
-          # 4. 转换为 jobs.json 格式
+          # 4. 转换为 jobs.json 格式（文本字段需从数组提取 text 内容）
           echo "$RECORDS_RESP" | jq '[.data.items[] | select(.fields["是否展示"] == true) | {
             id: .record_id,
-            name: .fields["岗位名称"],
-            description: .fields["岗位介绍"],
+            name: (.fields["岗位名称"] | if type == "array" then map(.text // "") | join("") else . end),
+            description: (.fields["岗位介绍"] | if type == "array" then map(.text // "") | join("") else . end),
             city: (.fields["期望城市"] | if type == "array" then .[0] else . end),
             recruitType: (.fields["招聘类型"] | if type == "array" then .[0] else . end),
-            companyIntro: .fields["公司简介"],
+            companyIntro: (.fields["公司简介"] | if type == "array" then map(.text // "") | join("") else . end),
             jobType: (.fields["岗位类型"] | if type == "array" then .[0] else . end)
           }]' > jobs.json
 
