@@ -407,34 +407,34 @@
       const modalCloseBtn = document.getElementById('modalCloseBtn');
       const shareImage = document.getElementById('shareCardImage');
 
-      function drawShareCard(job, pageUrl) {
-        // Create a hidden div for QR code generation
-        let qrDiv = document.getElementById('_qr_temp');
-        if (!qrDiv) {
-          qrDiv = document.createElement('div');
-          qrDiv.id = '_qr_temp';
-          qrDiv.style.cssText = 'position:absolute;left:-9999px;top:0;width:0;height:0;overflow:hidden';
-          document.body.appendChild(qrDiv);
+      function drawShareCard(job, pageUrl, formUrl) {
+        // Create hidden divs for QR code generation
+        function getQrDiv(id) {
+          let d = document.getElementById(id);
+          if (!d) {
+            d = document.createElement('div');
+            d.id = id;
+            d.style.cssText = 'position:absolute;left:-9999px;top:0;width:0;height:0;overflow:hidden';
+            document.body.appendChild(d);
+          }
+          d.innerHTML = '';
+          return d;
         }
-        qrDiv.innerHTML = '';
+        const qrDiv1 = getQrDiv('_qr_temp_1');
+        const qrDiv2 = getQrDiv('_qr_temp_2');
 
-        // Generate QR code on hidden div
-        new QRCode(qrDiv, {
-          text: pageUrl,
-          width: 140,
-          height: 140,
-          colorDark: '#1e293b',
-          colorLight: '#ffffff',
-          correctLevel: QRCode.CorrectLevel.H
-        });
+        // Generate two QR codes
+        new QRCode(qrDiv1, { text: pageUrl, width: 120, height: 120, colorDark: '#1e293b', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
+        new QRCode(qrDiv2, { text: formUrl, width: 120, height: 120, colorDark: '#1e293b', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
 
-        // Wait for QR code to render
+        // Wait for QR codes to render
         setTimeout(function() {
-          const qrCanvas = qrDiv.querySelector('canvas');
-          if (!qrCanvas) return;
+          const qrCanvas1 = qrDiv1.querySelector('canvas');
+          const qrCanvas2 = qrDiv2.querySelector('canvas');
+          if (!qrCanvas1 || !qrCanvas2) return;
 
           // Main canvas (2x for retina quality)
-          const W = 400, H = 540;
+          const W = 440, H = 560;
           const canvas = document.createElement('canvas');
           canvas.width = W * 2;
           canvas.height = H * 2;
@@ -476,7 +476,6 @@
           // Job name
           ctx.fillStyle = '#0f172a';
           ctx.font = 'bold 22px system-ui, -apple-system, sans-serif';
-          // Truncate job name if too long
           const jobName = job.name.length > 14 ? job.name.slice(0, 13) + '...' : job.name;
           ctx.fillText(jobName, W / 2, 120);
 
@@ -488,7 +487,6 @@
             { bg: '#fefce8', text: '#ca8a04' }
           ];
           const tagY = 145;
-          let tagX = W / 2 - ((tags.length * 62 + (tags.length - 1) * 8) / 2);
           tags.forEach(function(tag, i) {
             const tw = ctx.measureText(tag).width + 20;
             const tx = W / 2 - ((tags.length * (tw + 8) - 8) / 2) + i * (tw + 8);
@@ -501,16 +499,25 @@
             ctx.fillText(tag, tx + tw / 2, tagY + 5);
           });
 
-          // QR Code
-          const qrSize = 130;
-          const qrX = (W - qrSize) / 2;
+          // Two QR codes side by side
+          const qrSize = 120;
+          const qrGap = 24;
           const qrY = 190;
-          ctx.drawImage(qrCanvas, qrX, qrY, qrSize, qrSize);
+          const totalW = qrSize * 2 + qrGap;
+          const qr1X = (W - totalW) / 2;
+          const qr2X = qr1X + qrSize + qrGap;
 
-          // Hint text
+          ctx.drawImage(qrCanvas1, qr1X, qrY, qrSize, qrSize);
+          ctx.drawImage(qrCanvas2, qr2X, qrY, qrSize, qrSize);
+
+          // Labels under QR codes
           ctx.fillStyle = '#94a3b8';
           ctx.font = '12px system-ui, -apple-system, sans-serif';
-          ctx.fillText('扫描二维码查看职位详情', W / 2, qrY + qrSize + 28);
+          ctx.textAlign = 'center';
+          ctx.fillText('扫描二维码查看职位详情', qr1X + qrSize / 2, qrY + qrSize + 24);
+          ctx.fillStyle = '#2563eb';
+          ctx.font = 'bold 12px system-ui, -apple-system, sans-serif';
+          ctx.fillText('扫描二维码直接投递岗位', qr2X + qrSize / 2, qrY + qrSize + 24);
 
           // Bottom text
           ctx.fillStyle = '#cbd5e1';
@@ -520,12 +527,13 @@
           // Set image
           shareImage.src = canvas.toDataURL('image/png');
           modal.classList.add('open');
-        }, 200);
+        }, 400);
       }
 
       function openShareModal(job) {
         const pageUrl = window.location.href;
-        drawShareCard(job, pageUrl);
+        const formUrl = 'https://yuanzhuohui.feishu.cn/share/base/form/shrcnbLCblLIJ9sMYxoYzqaMtqe';
+        drawShareCard(job, pageUrl, formUrl);
       }
 
       function closeShareModal() {
