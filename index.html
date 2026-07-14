@@ -56,6 +56,11 @@
       line-height: 1.7;
       position: relative;
     }
+    @media (min-width: 768px) {
+      .banner .desc {
+        max-width: 760px;
+      }
+    }
 
     /* Container */
     .container {
@@ -169,11 +174,14 @@
       margin-bottom: 14px;
     }
     .job-tag {
-      display: inline-block;
-      padding: 3px 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 12px;
       border-radius: 6px;
       font-size: 0.8rem;
       font-weight: 500;
+      line-height: 1.2;
     }
     .job-tag.city {
       background: #f0f9ff;

@@ -93,11 +93,14 @@
       margin-bottom: 28px;
     }
     .job-tag {
-      display: inline-block;
-      padding: 5px 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 16px;
       border-radius: 8px;
       font-size: 0.85rem;
       font-weight: 500;
+      line-height: 1.2;
     }
     .job-tag.city {
       background: #f0f9ff;
@@ -496,7 +499,7 @@
             ctx.fill();
             ctx.fillStyle = tagColors[i].text;
             ctx.font = '13px system-ui, -apple-system, sans-serif';
-            ctx.fillText(tag, tx + tw / 2, tagY + 5);
+            ctx.fillText(tag, tx + tw / 2, tagY + 9);
           });
 
           // Two QR codes side by side
@@ -520,7 +523,7 @@
           // Bottom text
           ctx.fillStyle = '#cbd5e1';
           ctx.font = '11px system-ui, -apple-system, sans-serif';
-          ctx.fillText('维学新知 · 内推招聘', W / 2, H - 18);
+          ctx.fillText('维学新知 · 内推招聘', W / 2, H - 30);
 
           // Set image
           shareImage.src = canvas.toDataURL('image/png');
