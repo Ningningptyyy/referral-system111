@@ -18,15 +18,11 @@
 
     /* Header */
     .detail-header {
-      background: #fff;
-      border-bottom: 1px solid #e2e8f0;
+      background: #1e40af;
       padding: 10px 24px;
       position: sticky;
       top: 0;
       z-index: 50;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
     }
     .header-left {
       display: flex;
@@ -41,27 +37,28 @@
     .header-left .logo-text {
       font-size: 1rem;
       font-weight: 600;
-      color: #1e293b;
+      color: #fff;
     }
     .back-btn {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      color: #475569;
+      color: #e0e7ff;
       text-decoration: none;
-      font-size: 0.95rem;
+      font-size: 0.85rem;
       font-weight: 500;
-      padding: 6px 14px;
-      border-radius: 8px;
+      padding: 4px 10px;
+      margin-top: 6px;
+      border-radius: 6px;
       transition: all 0.2s;
     }
     .back-btn:hover {
-      background: #f1f5f9;
-      color: #2563eb;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
     }
     .back-btn svg {
-      width: 18px;
-      height: 18px;
+      width: 16px;
+      height: 16px;
     }
 
     /* Container */
@@ -545,7 +542,7 @@
           // Bottom text
           ctx.fillStyle = '#cbd5e1';
           ctx.font = '11px system-ui, -apple-system, sans-serif';
-          ctx.fillText('维学新知 · 内推招聘', W / 2, H - 30);
+          ctx.fillText('维学新知 · 内推招聘', W / 2, H - 15);
 
           // Set image
           shareImage.src = canvas.toDataURL('image/png');
