@@ -269,24 +269,6 @@
       text-align: center;
     }
 
-    .btn-download {
-      width: 100%;
-      padding: 11px;
-      border-radius: 10px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      border: 1.5px solid #e2e8f0;
-      background: #fff;
-      color: #475569;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .btn-download:hover {
-      border-color: #2563eb;
-      color: #2563eb;
-      background: #eff6ff;
-    }
-
     /* Footer */
     .footer {
       background: #1e293b;
@@ -336,9 +318,8 @@
       <div class="modal-title">职位分享卡片</div>
       <div class="share-card" id="shareCard">
         <img id="shareCardImage" alt="职位分享卡片" style="width:100%;border-radius:8px;display:block" />
-        <p style="font-size:0.78rem;color:#94a3b8;margin-top:8px;text-align:center">长按图片保存到手机</p>
+        <p style="font-size:0.78rem;color:#94a3b8;margin-top:8px;text-align:center"><strong>长按图片保存到手机</strong></p>
       </div>
-      <button class="btn-download" id="downloadBtn">下载卡片</button>
     </div>
   </div>
 
@@ -561,18 +542,7 @@
         if (e.key === 'Escape' && modal.classList.contains('open')) closeShareModal();
       });
 
-      // Download card (works in desktop browsers)
-      document.getElementById('downloadBtn').addEventListener('click', function() {
-        const src = shareImage.src;
-        if (!src || src === '') return;
-        const link = document.createElement('a');
-        link.download = '职位分享卡片.png';
-        link.href = src;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      });
-    })();
+      })();
   </script>
 </body>
 </html>
