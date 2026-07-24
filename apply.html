@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>岗位投递 - 维学新知 内推招聘</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      background: #f1f5f9;
+      color: #1e293b;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Header */
+    .top-header {
+      background: #1e40af;
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .top-header .logo {
+      height: 56px;
+      width: auto;
+      display: block;
+    }
+    .top-header .logo-text {
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: #1e40af;
+      background: #fff;
+      padding: 3px 8px;
+      border-radius: 8px;
+      line-height: 1.3;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 32px 20px;
+      flex: 1;
+      width: 100%;
+    }
+
+    .form-card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+      padding: 36px 32px;
+    }
+
+    .form-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+    .form-subtitle {
+      font-size: 0.9rem;
+      color: #64748b;
+      margin-bottom: 28px;
+      line-height: 1.7;
+    }
+
+    .form-group {
+      margin-bottom: 22px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 6px;
+    }
+    .form-group label .required {
+      color: #ef4444;
+      margin-left: 2px;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      color: #1e293b;
+      background: #fff;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    .form-group .hint {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+    .form-group .radio-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .form-group .radio-option {
+      position: relative;
+    }
+    .form-group .radio-option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .form-group .radio-option label {
+      display: inline-block;
+      padding: 8px 18px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: #fff;
+    }
+    .form-group .radio-option input:checked + label {
+      border-color: #2563eb;
+      background: #eff6ff;
+      color: #2563eb;
+    }
+    .form-group .radio-option label:hover {
+      border-color: #93c5fd;
+    }
+    .form-group .radio-option input:checked + label.other-checked {
+      border-color: #2563eb;
+      background: #eff6ff;
+      color: #2563eb;
+    }
+    .form-group .other-input {
+      margin-top: 8px;
+      display: none;
+    }
+    .form-group .other-input.show {
+      display: block;
+    }
+
+    .form-group .checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.85rem;
+      color: #475569;
+      line-height: 1.6;
+      cursor: pointer;
+    }
+    .form-group .checkbox-label input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 3px;
+      flex-shrink: 0;
+      accent-color: #2563eb;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 14px;
+      margin-top: 32px;
+    }
+    .btn {
+      padding: 12px 28px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      text-align: center;
+    }
+    .btn-primary {
+      background: #2563eb;
+      color: #fff;
+      flex: 1;
+    }
+    .btn-primary:hover {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+    }
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #475569;
+      flex: 0 0 auto;
+    }
+    .btn-secondary:hover {
+      background: #e2e8f0;
+    }
+
+    /* Success state */
+    .success-state {
+      display: none;
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .success-state .icon {
+      font-size: 3.5rem;
+      margin-bottom: 16px;
+    }
+    .success-state h2 {
+      font-size: 1.5rem;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+    .success-state p {
+      color: #64748b;
+      margin-bottom: 24px;
+    }
+
+    .footer {
+      background: #1e293b;
+      color: #94a3b8;
+      text-align: center;
+      padding: 20px;
+      font-size: 0.85rem;
+    }
+
+    /* File upload */
+    .file-upload-area {
+      border: 2px dashed #e2e8f0;
+      border-radius: 10px;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .file-upload-area:hover {
+      border-color: #93c5fd;
+      background: #f8fafc;
+    }
+    .file-upload-area .icon {
+      font-size: 1.8rem;
+      margin-bottom: 6px;
+    }
+    .file-upload-area p {
+      font-size: 0.85rem;
+      color: #94a3b8;
+    }
+    .file-upload-area input {
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      .form-card { padding: 24px 18px; }
+      .form-title { font-size: 1.25rem; }
+      .form-actions { flex-direction: column; }
+      .btn-secondary { flex: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-header">
+    <img class="logo" src="logo.png" alt="圆桌星球" />
+    <span class="logo-text">内推</span>
+  </div>
+
+  <div class="container">
+    <div class="form-card" id="formCard">
+      <div class="form-title">岗位投递</div>
+      <div class="form-subtitle">感谢您关注维学新知！请您填写个人基本信息，以便我们管理及处理您的职位申请，推进招聘流程并提供招聘有关服务。</div>
+
+      <form id="applyForm" novalidate>
+        <!-- 1. 姓名 -->
+        <div class="form-group">
+          <label>姓名 <span class="required">*</span></label>
+          <input type="text" name="name" placeholder="请输入您的姓名" required />
+        </div>
+
+        <!-- 2. 手机号码 -->
+        <div class="form-group">
+          <label>手机号码 <span class="required">*</span></label>
+          <input type="tel" name="phone" placeholder="请输入您的手机号码" required />
+        </div>
+
+        <!-- 3. 个人邮箱 -->
+        <div class="form-group">
+          <label>个人邮箱 <span class="required">*</span></label>
+          <input type="email" name="email" placeholder="请输入您的邮箱地址" required />
+        </div>
+
+        <!-- 4. 期望岗位 -->
+        <div class="form-group">
+          <label>期望岗位 <span class="required">*</span></label>
+          <div class="radio-group" id="positionGroup">
+            <div class="radio-option">
+              <input type="radio" name="position" id="pos1" value="思辨老师（正价课）" />
+              <label for="pos1">思辨老师（正价课）</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" name="position" id="pos2" value="思辨老师（体验课）" />
+              <label for="pos2">思辨老师（体验课）</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" name="position" id="pos3" value="课程顾问" />
+              <label for="pos3">课程顾问</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" name="position" id="pos4" value="学管师" />
+              <label for="pos4">学管师</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" name="position" id="pos5" value="其他" />
+              <label for="pos5">其他</label>
+            </div>
+          </div>
+          <div class="other-input" id="positionOther">
+            <input type="text" placeholder="请您手动填写推荐人向您推荐的岗位" />
+          </div>
+        </div>
+
+        <!-- 5. 期望工作地点 -->
+        <div class="form-group">
+          <label>期望工作地点 <span class="required">*</span></label>
+          <div class="radio-group" id="cityGroup">
+            <div class="radio-option"><input type="radio" name="city" id="city1" value="远程" /><label for="city1">远程</label></div>
+            <div class="radio-option"><input type="radio" name="city" id="city2" value="杭州" /><label for="city2">杭州</label></div>
+            <div class="radio-option"><input type="radio" name="city" id="city3" value="武汉" /><label for="city3">武汉</label></div>
+            <div class="radio-option"><input type="radio" name="city" id="city4" value="重庆" /><label for="city4">重庆</label></div>
+            <div class="radio-option"><input type="radio" name="city" id="city5" value="大连" /><label for="city5">大连</label></div>
+            <div class="radio-option"><input type="radio" name="city" id="city6" value="上海" /><label for="city6">上海</label></div>
+          </div>
+        </div>
+
+        <!-- 6. 最高学历 -->
+        <div class="form-group">
+          <label>最高学历 <span class="required">*</span></label>
+          <div class="radio-group" id="eduGroup">
+            <div class="radio-option"><input type="radio" name="education" id="edu1" value="博士" /><label for="edu1">博士</label></div>
+            <div class="radio-option"><input type="radio" name="education" id="edu2" value="MBA" /><label for="edu2">MBA</label></div>
+            <div class="radio-option"><input type="radio" name="education" id="edu3" value="硕士" /><label for="edu3">硕士</label></div>
+            <div class="radio-option"><input type="radio" name="education" id="edu4" value="本科" /><label for="edu4">本科</label></div>
+            <div class="radio-option"><input type="radio" name="education" id="edu5" value="专科" /><label for="edu5">专科</label></div>
+            <div class="radio-option"><input type="radio" name="education" id="edu6" value="高中" /><label for="edu6">高中</label></div>
+            <div class="radio-option"><input type="radio" name="education" id="edu7" value="专职" /><label for="edu7">专职</label></div>
+            <div class="radio-option"><input type="radio" name="education" id="edu8" value="其他" /><label for="edu8">其他</label></div>
+          </div>
+          <div class="other-input" id="eduOther">
+            <input type="text" placeholder="如专升本、非全日制学制学历等" />
+          </div>
+        </div>
+
+        <!-- 7. 就读院校 -->
+        <div class="form-group">
+          <label>就读院校 <span class="required">*</span></label>
+          <input type="text" name="school" placeholder="请输入您的就读院校" required />
+        </div>
+
+        <!-- 8. 就读专业 -->
+        <div class="form-group">
+          <label>就读专业 <span class="required">*</span></label>
+          <input type="text" name="major" placeholder="请输入您的就读专业" required />
+        </div>
+
+        <!-- 9. 社交账号 -->
+        <div class="form-group">
+          <label>社交账号 <span class="required">*</span></label>
+          <div class="radio-group" id="socialGroup">
+            <div class="radio-option"><input type="radio" name="socialType" id="soc1" value="微信ID" /><label for="soc1">微信ID</label></div>
+            <div class="radio-option"><input type="radio" name="socialType" id="soc2" value="QQID" /><label for="soc2">QQID</label></div>
+            <div class="radio-option"><input type="radio" name="socialType" id="soc3" value="其他" /><label for="soc3">其他</label></div>
+          </div>
+          <div style="margin-top:8px;">
+            <input type="text" name="socialAccount" placeholder="请输入个人ID" required />
+          </div>
+          <div class="other-input" id="socialOther">
+            <input type="text" placeholder="请填写平台及对应ID" />
+          </div>
+        </div>
+
+        <!-- 10. 推荐人 -->
+        <div class="form-group">
+          <label>推荐人姓名 <span class="required">*</span></label>
+          <input type="text" name="referrer" placeholder="若无推荐人，请填写"无"" required />
+          <div class="hint">若无推荐人，请填写"无"</div>
+        </div>
+
+        <!-- 11. 简历上传 -->
+        <div class="form-group">
+          <label>个人简历 <span style="color:#94a3b8;font-weight:400;">（非必填）</span></label>
+          <div class="file-upload-area" id="fileUploadArea">
+            <div class="icon">📄</div>
+            <p>点击上传图片或附件</p>
+            <p style="font-size:0.75rem;color:#cbd5e1;margin-top:2px;">支持 PDF、Word、图片格式</p>
+            <input type="file" id="resumeFile" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" />
+          </div>
+        </div>
+
+        <!-- 12. 授权同意 -->
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" name="consent" required />
+            <span>如您提交本表单，即代表您同意授权杭州维学新知科技有限公司及其关联公司，依据《中华人民共和国个人信息保护法》等相关法律法规，合规处理您本次提交的全部简历个人信息，包括但不限于查阅、核验、整理、存档、上传至公司内部人事、招聘、备案等系统等处理操作，且可将相关信息用于招聘用工相关事宜。公司承诺严格保护您的个人信息，不违规外泄、商用您的信息。本人已知晓自身个人信息相关合法权益，自愿同意以上信息处理规则。<span style="color:#ef4444;">*</span></span>
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="history.back()">返回</button>
+          <button type="submit" class="btn btn-primary">提交投递</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="form-card success-state" id="successState">
+      <div class="icon">✅</div>
+      <h2>投递成功</h2>
+      <p>感谢您的投递，我们将尽快处理您的申请。<br />如有疑问可联系推荐人咨询。</p>
+      <a href="index.html" class="btn btn-primary" style="display:inline-block;">返回首页</a>
+    </div>
+  </div>
+
+  <div class="footer">
+    &copy; 2026 维学新知 &mdash; 内部推荐招聘平台
+  </div>
+
+  <script>
+    (function() {
+      // "其他" 选项显示输入框
+      function setupOtherRadio(groupId, otherInputId) {
+        const radios = document.querySelectorAll('#' + groupId + ' input[type="radio"]');
+        const otherInput = document.getElementById(otherInputId);
+        radios.forEach(function(r) {
+          r.addEventListener('change', function() {
+            if (this.value === '其他') {
+              otherInput.classList.add('show');
+            } else {
+              otherInput.classList.remove('show');
+            }
+          });
+        });
+      }
+      setupOtherRadio('positionGroup', 'positionOther');
+      setupOtherRadio('eduGroup', 'eduOther');
+
+      // 社交账号"其他"
+      document.querySelectorAll('#socialGroup input[type="radio"]').forEach(function(r) {
+        r.addEventListener('change', function() {
+          document.getElementById('socialOther').classList.toggle('show', this.value === '其他');
+        });
+      });
+
+      // 文件上传
+      document.getElementById('fileUploadArea').addEventListener('click', function() {
+        document.getElementById('resumeFile').click();
+      });
+      document.getElementById('resumeFile').addEventListener('change', function() {
+        if (this.files.length > 0) {
+          document.querySelector('#fileUploadArea p').textContent = this.files[0].name;
+        }
+      });
+
+      // 表单提交（预览模式 - 模拟提交）
+      document.getElementById('applyForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // 简单校验
+        const required = this.querySelectorAll('[required]');
+        let valid = true;
+        required.forEach(function(field) {
+          if (!field.value || field.value.trim() === '') {
+            field.style.borderColor = '#ef4444';
+            valid = false;
+          } else {
+            field.style.borderColor = '#e2e8f0';
+          }
+        });
+        // 校验单选
+        const radioGroups = ['position', 'city', 'education', 'socialType'];
+        radioGroups.forEach(function(name) {
+          const checked = document.querySelector('input[name="' + name + '"]:checked');
+          if (!checked) valid = false;
+        });
+
+        if (!valid) {
+          alert('请填写所有必填项');
+          return;
+        }
+
+        // 收集数据
+        var formData = {
+          name: this.querySelector('[name="name"]').value,
+          phone: this.querySelector('[name="phone"]').value,
+          email: this.querySelector('[name="email"]').value,
+          position: document.querySelector('input[name="position"]:checked')?.value || '',
+          positionOther: document.getElementById('positionOther').querySelector('input')?.value || '',
+          city: document.querySelector('input[name="city"]:checked')?.value || '',
+          education: document.querySelector('input[name="education"]:checked')?.value || '',
+          eduOther: document.getElementById('eduOther').querySelector('input')?.value || '',
+          school: this.querySelector('[name="school"]').value,
+          major: this.querySelector('[name="major"]').value,
+          socialType: document.querySelector('input[name="socialType"]:checked')?.value || '',
+          socialAccount: this.querySelector('[name="socialAccount"]').value,
+          socialOther: document.getElementById('socialOther').querySelector('input')?.value || '',
+          referrer: this.querySelector('[name="referrer"]').value,
+          consent: this.querySelector('[name="consent"]').checked
+        };
+
+        console.log('投递数据：', formData);
+
+        // 预览模式：显示成功状态
+        document.getElementById('formCard').style.display = 'none';
+        document.getElementById('successState').style.display = 'block';
+      });
+    })();
+  </script>
+</body>
+</html>
